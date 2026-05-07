@@ -4,228 +4,577 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pre-Examination Sorting Activity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         :root {
-            --brand-main: #001489;
-            --brand-secondary: #007DBA;
-            --brand-accent: #8fad15;
-            --error-red: #d32f2f;
-            --text-dark: #2c3e50;
+            --navy: #1a1f5e;
+            --navy-mid: #2d3494;
+            --accent-green: #4a7c2f;
+            --accent-green-bg: #eaf3de;
+            --accent-red: #a32d2d;
+            --accent-red-bg: #fcebeb;
+            --accent-blue-bg: #e6f1fb;
+            --accent-blue: #185fa5;
+            --border: #e2e4ea;
+            --bg-page: #f4f5f9;
+            --bg-card: #ffffff;
+            --text-main: #1a1d2e;
+            --text-muted: #5a5f7a;
+            --text-light: #8a8fa8;
+            --drag-shadow: 0 8px 24px rgba(26,31,94,0.18);
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--brand-secondary);
-            background-image: linear-gradient(135deg, var(--brand-secondary) 0%, #005a87 100%);
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            padding: 40px 15px;
-            margin: 0;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
             min-height: 100vh;
+            padding: 32px 16px 60px;
         }
 
-        .container {
-            background: #ffffff;
-            width: 100%;
-            max-width: 850px;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        .page-wrapper {
+            max-width: 760px;
+            margin: 0 auto;
         }
 
-        h1 {
-            color: var(--brand-main);
-            font-size: 1.8rem;
-            text-align: center;
-            margin-bottom: 10px;
+        /* ── MODULE HEADER ── */
+        .module-tag {
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
         }
 
-        .instruction {
-            text-align: center;
-            font-style: italic;
-            color: #5d6d7e;
-            margin-bottom: 35px;
-            font-size: 1.1rem;
-            border-bottom: 2px solid #f0f3f4;
-            padding-bottom: 20px;
+        .page-title {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 4px;
+            line-height: 1.25;
         }
 
+        .page-subtitle {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        /* ── INSTRUCTION CARD ── */
+        .instruction-card {
+            background: var(--accent-blue-bg);
+            border: 1px solid #b5d4f4;
+            border-radius: 14px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .instruction-card .icon {
+            font-size: 2rem;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .instruction-card .text strong {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+        }
+
+        .instruction-card .text p {
+            font-size: 0.875rem;
+            color: #2a4a7a;
+            line-height: 1.55;
+        }
+
+        /* ── SECTION LABEL ── */
+        .section-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        /* ── SORTABLE LIST ── */
         #sortable-list {
             list-style: none;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 32px;
         }
 
         .sortable-item {
-            background: #ffffff;
-            border: 2px solid #ebedef;
-            border-left: 8px solid var(--brand-main);
-            margin-bottom: 15px;
-            padding: 20px;
-            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
             cursor: grab;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+            user-select: none;
         }
 
         .sortable-item:hover {
-            border-color: var(--brand-main);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,20,137,0.15);
+            border-color: #b0b6d4;
+            box-shadow: 0 3px 10px rgba(26,31,94,0.09);
         }
 
         .sortable-item.dragging {
-            opacity: 0.2;
-            transform: scale(0.95);
+            opacity: 0.3;
+            transform: scale(0.97);
+            cursor: grabbing;
         }
 
-        .step-title {
-            font-weight: 800;
-            display: block;
-            margin-bottom: 8px;
-            color: var(--brand-main);
-            font-size: 1.15rem;
+        .sortable-item.drag-over {
+            border-color: var(--navy-mid);
+            box-shadow: var(--drag-shadow);
         }
 
-        .step-desc {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #444;
-            margin: 0;
+        .item-emoji {
+            font-size: 1.5rem;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
-        .controls {
-            margin-top: 40px;
-            text-align: center;
-        }
+        .item-body { flex: 1; }
 
-        button {
-            background-color: var(--brand-main);
-            color: #ffffff;
-            border: none;
-            padding: 16px 50px;
-            font-size: 1.2rem;
+        .item-timing {
+            font-size: 0.72rem;
             font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--navy-mid);
+            background: var(--accent-blue-bg);
+            border-radius: 6px;
+            padding: 2px 8px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .item-title {
+            font-size: 0.97rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            line-height: 1.35;
+        }
+
+        .item-desc {
+            font-size: 0.83rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .drag-handle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 4px;
+            cursor: grab;
+        }
+
+        /* ── BUTTONS ── */
+        .controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .btn-check {
+            background: var(--navy);
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: background 0.2s ease, transform 0.1s ease;
         }
 
-        button:hover {
-            background-color: var(--brand-accent);
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(143,173,21,0.4);
+        .btn-check:hover { background: var(--navy-mid); }
+        .btn-check:active { transform: scale(0.97); }
+
+        .btn-reset {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1.5px solid var(--border);
+            padding: 11px 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            font-family: inherit;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, color 0.2s ease;
         }
 
-        button:active {
-            transform: scale(0.98);
+        .btn-reset:hover {
+            border-color: var(--navy);
+            color: var(--navy);
         }
 
+        /* ── FEEDBACK BANNER ── */
         #feedback {
-            margin-top: 30px;
-            font-weight: 800;
-            font-size: 1.3rem;
-            min-height: 2rem;
-            transition: all 0.3s ease;
+            display: none;
+            border-radius: 12px;
+            padding: 16px 22px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .correct { 
-            color: var(--brand-accent);
-            text-shadow: 0px 0px 1px rgba(0,0,0,0.1);
-        }
-        
-        .incorrect { color: var(--error-red); }
+        #feedback.hidden { display: none; }
 
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .container { padding: 20px; }
-            h1 { font-size: 1.4rem; }
-            .step-title { font-size: 1rem; }
+        #feedback.correct {
+            background: var(--accent-green-bg);
+            border: 1px solid #c0dd97;
+            color: var(--accent-green);
+        }
+
+        #feedback.incorrect {
+            background: var(--accent-red-bg);
+            border: 1px solid #f7c1c1;
+            color: var(--accent-red);
+        }
+
+        #feedback .fb-icon { font-size: 1.3rem; }
+
+        /* ── RESULTS TABLE ── */
+        #results-section {
+            display: none;
+        }
+
+        #results-section.visible {
+            display: block;
+        }
+
+        .results-heading {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.83rem;
+        }
+
+        .results-table thead th {
+            background: #f0f1f8;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 0.72rem;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .results-table thead th:first-child { border-radius: 10px 0 0 0; }
+        .results-table thead th:last-child { border-radius: 0 10px 0 0; }
+
+        .results-table tbody tr:nth-child(even) {
+            background: #fafbfe;
+        }
+
+        .results-table tbody td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        .results-table tbody td:first-child {
+            font-weight: 600;
+            color: var(--navy);
+            white-space: nowrap;
+        }
+
+        .results-table tbody td .why {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* ── BACK LINK ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-top: 36px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover { color: var(--navy); }
+
+        /* ── SCORE BADGE ── */
+        .score-badge {
+            display: inline-block;
+            background: var(--navy);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 20px;
+            padding: 2px 12px;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 560px) {
+            .page-title { font-size: 1.25rem; }
+            .instruction-card { flex-direction: column; gap: 10px; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .btn-check, .btn-reset { text-align: center; }
+            .results-table { font-size: 0.78rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Sort the Pre-Examination Steps</h1>
-    <p class="instruction">Learners: Drag the blocks into the correct chronological order from top to bottom.</p>
+<div class="page-wrapper">
+
+    <p class="module-tag">Pre-Examination Procedure</p>
+    <h1 class="page-title">Sort the Steps: Examination Preparation</h1>
+    <p class="page-subtitle">Invigilator Training Activity — Chronological Sequencing</p>
+
+    <div class="instruction-card">
+        <div class="icon">🗂️</div>
+        <div class="text">
+            <strong>Drag &amp; Drop: Arrange the steps in the correct order</strong>
+            <p>Each block below represents a stage in the pre-examination procedure. <strong>Drag each step</strong> into the correct chronological order from top to bottom. Once all steps are placed, press <strong>Check my answers</strong>.</p>
+        </div>
+    </div>
+
+    <p class="section-label">Steps — drag to reorder</p>
 
     <ul id="sortable-list"></ul>
 
     <div class="controls">
-        <button onclick="checkOrder()">Validate Sequence</button>
-        <div id="feedback"></div>
+        <button class="btn-check" onclick="checkOrder()">✓ Check my answers</button>
+        <button class="btn-reset" onclick="resetActivity()">↩ Start over</button>
     </div>
+
+    <div id="feedback" class="hidden"></div>
+
+    <div id="results-section">
+        <div class="results-heading">
+            📋 Correct sequence <span id="score-badge"></span>
+        </div>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Timing</th>
+                    <th>Step</th>
+                    <th>Key actions</th>
+                </tr>
+            </thead>
+            <tbody id="results-body"></tbody>
+        </table>
+    </div>
+
 </div>
 
 <script>
     const stepsData = [
-        { title: "2 days before: Prepare the Examination Venue", desc: "Ensure the venue is clean, well-lit, well-ventilated, and free from disruptions. Arrange desks at least 1 meter apart. Remove all learning materials, posters and subject-related content from walls and boards. Switch off any intercom or public address system." },
-        { title: "Before the exam: Prepare the Seating Plan and Display It", desc: "Prepare a unique seating plan for each session using the snaking method. Paste examination numbers — not names — on each desk. Display the seating plan inside and outside the examination room." },
-        { title: "1 hour before: Retrieve the Session Bag and Brief Invigilators", desc: "Retrieve the sealed session bag following the SmartLock key procedure. Verify the correct subject and session. Confirm all documents and materials are ready. Ensure sufficient invigilators are present (ratio 1:30) and brief them on their roles and responsibilities." },
-        { title: "35 min before: Admit Candidates and Search for Prohibited Items", desc: "Allow candidates to enter 35 minutes before the examination. Station an invigilator at the entrance to check IDs and admission letters. Ensure all candidates perform a self-search. Remove all unauthorised materials — phones, smart watches, notes, textbooks, Bluetooth devices. Bags must not enter the venue." },
-        { title: "25 min before: Issue Answer Books and Complete Cover Pages", desc: "Issue answer books individually 25 minutes before the start. Record the number issued. Verify that all candidates complete the 5-point check: barcoded sticker, examination number, date, subject code and subject name. Confirm cover pages are fully and correctly completed." },
-        { title: "Before writing: Verify, Open and Distribute Question Papers", desc: "Have two candidates verify the sealed inner bags. Open the question paper bags in front of the candidates and the principal or centre manager. Hand each candidate the correct question paper individually, placed face down. Page through all papers to check for missing pages, unclear printing or repeated sections. Read and record any errata on the board and add extra time to compensate." },
-        { title: "10 min before: Read the Examination Rules Aloud", desc: "Begin reading time 10 minutes before writing starts. Candidates may read the question paper only — no writing is permitted. Read the examination rules aloud to all candidates. Do not read the instructions of the question paper." },
-        { title: "Writing begins: Instruct Candidates to Begin Writing", desc: "At the official start time, instruct candidates to turn over their question papers and begin writing. The examination session is now underway." }
+        {
+            emoji: "🏫",
+            timing: "2 days before",
+            title: "Prepare the Examination Venue",
+            desc: "Ensure the venue is clean, well-lit, well-ventilated, and free from disruptions. Arrange desks at least 1 metre apart. Remove all learning materials, posters and subject-related content. Switch off any intercom or public address system.",
+            keyActions: "Clean venue · desks 1m apart · remove all learning material · disable PA system"
+        },
+        {
+            emoji: "🪑",
+            timing: "Before the exam",
+            title: "Prepare and Display the Seating Plan",
+            desc: "Prepare a unique seating plan for each session using the snaking method. Paste examination numbers — not names — on each desk. Display the seating plan inside and outside the examination room.",
+            keyActions: "Snaking method · examination numbers on desks · display plan inside & outside"
+        },
+        {
+            emoji: "🔑",
+            timing: "1 hour before",
+            title: "Retrieve the Session Bag and Brief Invigilators",
+            desc: "Retrieve the sealed session bag following the SmartLock key procedure. Verify the correct subject and session. Confirm all documents and materials are ready. Ensure sufficient invigilators are present (ratio 1:30) and brief them on their roles.",
+            keyActions: "SmartLock procedure · verify subject/session · invigilator ratio 1:30 · briefing"
+        },
+        {
+            emoji: "🚪",
+            timing: "35 min before",
+            title: "Admit Candidates and Search for Prohibited Items",
+            desc: "Allow candidates to enter 35 minutes before the examination. Station an invigilator at the entrance to check IDs and admission letters. Ensure all candidates perform a self-search. Bags must not enter the venue.",
+            keyActions: "Check IDs & admission letters · self-search · remove phones, smart watches, notes · no bags"
+        },
+        {
+            emoji: "📝",
+            timing: "25 min before",
+            title: "Issue Answer Books and Complete Cover Pages",
+            desc: "Issue answer books individually 25 minutes before the start. Record the number issued. Verify that all candidates complete the 5-point check: barcoded sticker, examination number, date, subject code and subject name.",
+            keyActions: "Issue & record answer books · 5-point cover page check: sticker, exam no., date, subject code & name"
+        },
+        {
+            emoji: "📦",
+            timing: "Before writing",
+            title: "Verify, Open and Distribute Question Papers",
+            desc: "Have two candidates verify the sealed inner bags. Open question paper bags in front of candidates and the principal. Hand each candidate the correct paper placed face down. Page through all papers to check for missing or unclear pages. Record any errata on the board.",
+            keyActions: "Two candidates verify bags · open in front of principal · face down · check for errors · note errata"
+        },
+        {
+            emoji: "📢",
+            timing: "10 min before",
+            title: "Read the Examination Rules Aloud",
+            desc: "Begin reading time 10 minutes before writing starts. Candidates may read the question paper only — no writing permitted. Read the examination rules aloud to all candidates. Do not read the instructions of the question paper.",
+            keyActions: "Reading time only (no writing) · rules read aloud · do NOT read question paper instructions"
+        },
+        {
+            emoji: "✍️",
+            timing: "Writing begins",
+            title: "Instruct Candidates to Begin Writing",
+            desc: "At the official start time, instruct candidates to turn over their question papers and begin writing. The examination session is now underway.",
+            keyActions: "Official start time · candidates turn over papers · writing commences"
+        }
     ];
 
-    const listElement = document.getElementById('sortable-list');
-    const feedback = document.getElementById('feedback');
+    const listEl = document.getElementById('sortable-list');
+    const feedbackEl = document.getElementById('feedback');
+    const resultsSection = document.getElementById('results-section');
+    const resultsBody = document.getElementById('results-body');
+    const scoreBadge = document.getElementById('score-badge');
 
-    function init() {
-        const shuffled = [...stepsData].sort(() => Math.random() - 0.5);
-        
-        shuffled.forEach(step => {
-            const li = document.createElement('li');
-            li.className = 'sortable-item';
-            li.draggable = true;
-            li.innerHTML = `<span class="step-title">${step.title}</span><p class="step-desc">${step.desc}</p>`;
-            
-            li.addEventListener('dragstart', () => li.classList.add('dragging'));
-            li.addEventListener('dragend', () => li.classList.remove('dragging'));
-            listElement.appendChild(li);
+    let draggedItem = null;
+
+    function buildItem(step) {
+        const li = document.createElement('li');
+        li.className = 'sortable-item';
+        li.draggable = true;
+        li.dataset.title = step.title;
+        li.innerHTML = `
+            <div class="item-emoji" aria-hidden="true">${step.emoji}</div>
+            <div class="item-body">
+                <span class="item-timing">${step.timing}</span>
+                <div class="item-title">${step.title}</div>
+                <div class="item-desc">${step.desc}</div>
+            </div>
+            <div class="drag-handle" aria-hidden="true">⠿</div>
+        `;
+
+        li.addEventListener('dragstart', (e) => {
+            draggedItem = li;
+            setTimeout(() => li.classList.add('dragging'), 0);
+            e.dataTransfer.effectAllowed = 'move';
         });
+
+        li.addEventListener('dragend', () => {
+            li.classList.remove('dragging');
+            document.querySelectorAll('.sortable-item').forEach(i => i.classList.remove('drag-over'));
+            draggedItem = null;
+        });
+
+        li.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (draggedItem && draggedItem !== li) {
+                li.classList.add('drag-over');
+            }
+        });
+
+        li.addEventListener('dragleave', () => li.classList.remove('drag-over'));
+
+        li.addEventListener('drop', (e) => {
+            e.preventDefault();
+            li.classList.remove('drag-over');
+            if (draggedItem && draggedItem !== li) {
+                const items = [...listEl.querySelectorAll('.sortable-item')];
+                const draggedIdx = items.indexOf(draggedItem);
+                const targetIdx = items.indexOf(li);
+                if (draggedIdx < targetIdx) {
+                    listEl.insertBefore(draggedItem, li.nextSibling);
+                } else {
+                    listEl.insertBefore(draggedItem, li);
+                }
+            }
+        });
+
+        return li;
     }
 
-    listElement.addEventListener('dragover', e => {
-        e.preventDefault();
-        const dragging = document.querySelector('.dragging');
-        const afterElement = getDragAfterElement(listElement, e.clientY);
-        if (afterElement == null) {
-            listElement.appendChild(dragging);
-        } else {
-            listElement.insertBefore(dragging, afterElement);
-        }
-    });
+    function init() {
+        listEl.innerHTML = '';
+        feedbackEl.className = 'hidden';
+        feedbackEl.innerHTML = '';
+        resultsSection.classList.remove('visible');
+        resultsBody.innerHTML = '';
 
-    function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.sortable-item:not(.dragging)')];
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
+        const shuffled = [...stepsData].sort(() => Math.random() - 0.5);
+        shuffled.forEach(step => listEl.appendChild(buildItem(step)));
     }
 
     function checkOrder() {
-        const currentTitles = [...listElement.querySelectorAll('.step-title')].map(s => s.textContent);
+        const currentTitles = [...listEl.querySelectorAll('.sortable-item')].map(i => i.dataset.title);
         const correctTitles = stepsData.map(s => s.title);
-        
-        if (JSON.stringify(currentTitles) === JSON.stringify(correctTitles)) {
-            feedback.textContent = "✓ Excellent! The sequence is 100% correct.";
-            feedback.className = "correct";
-        } else {
-            feedback.textContent = "✕ Not quite. Please check the timings and try again.";
-            feedback.className = "incorrect";
+
+        let correctCount = 0;
+        currentTitles.forEach((t, i) => { if (t === correctTitles[i]) correctCount++; });
+        const allCorrect = correctCount === correctTitles.length;
+
+        feedbackEl.className = allCorrect ? 'correct' : 'incorrect';
+        feedbackEl.innerHTML = allCorrect
+            ? `<span class="fb-icon">✅</span> <span>Excellent! The sequence is 100% correct — all ${stepsData.length} steps in the right order.</span>`
+            : `<span class="fb-icon">❌</span> <span>Not quite — ${correctCount} of ${stepsData.length} steps are in the correct position. Check the timings carefully and try again.</span>`;
+
+        if (allCorrect) {
+            buildResultsTable();
+            resultsSection.classList.add('visible');
+            scoreBadge.textContent = `${stepsData.length} / ${stepsData.length}`;
         }
+    }
+
+    function buildResultsTable() {
+        resultsBody.innerHTML = '';
+        stepsData.forEach(step => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${step.emoji} ${step.timing}</td>
+                <td><strong>${step.title}</strong><div class="why">${step.keyActions}</div></td>
+                <td style="color: var(--text-muted); font-size: 0.8rem; line-height:1.5;">${step.desc}</td>
+            `;
+            resultsBody.appendChild(tr);
+        });
+    }
+
+    function resetActivity() {
+        init();
     }
 
     init();
