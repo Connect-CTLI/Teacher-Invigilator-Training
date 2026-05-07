@@ -3,210 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invigilation Role Challenge</title>
+    <title>Exam Day: Roles in Action</title>
     <style>
         :root {
-            --primary-navy: #1a1f5e;
-            --secondary-blue: #185fa5;
-            --accent-green: #3a6b22;
-            --error-red: #a32d2d;
-            --bg-light: #f4f7f9;
-            --white: #ffffff;
+            --primary: #1a1f5e;
+            --secondary: #185fa5;
+            --chief-color: #6c5ce7;
+            --invig-color: #00b894;
+            --both-color: #fdcb6e;
+            --bg: #f0f2f5;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #d1d8e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: var(--bg);
             margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
         }
 
-        .challenge-container {
+        .simulation-container {
             width: 100%;
-            max-width: 600px;
-            background: var(--white);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            padding: 30px;
+            max-width: 800px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 25px;
             text-align: center;
         }
 
-        .progress-container {
-            width: 100%;
-            background: #eee;
-            border-radius: 10px;
-            height: 8px;
-            margin-bottom: 20px;
-        }
-
-        #progress-bar {
-            width: 0%;
-            height: 100%;
-            background: var(--secondary-blue);
-            border-radius: 10px;
-            transition: width 0.4s ease;
-        }
-
-        .card-counter {
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* The Active Question Card */
-        .duty-display {
-            min-height: 150px;
+        /* Timeline Navigation */
+        .timeline-nav {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-light);
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: var(--primary-navy);
-            transition: transform 0.3s ease;
+            background: #e9ecef;
+            padding: 10px;
+            gap: 10px;
         }
 
-        /* Interaction Buttons */
-        .button-grid {
+        .stage-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .stage-btn.active {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 30px;
+            min-height: 400px;
+        }
+
+        .duty-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 15px;
         }
 
-        .role-btn {
+        .duty-item {
+            display: flex;
+            align-items: center;
             padding: 15px;
-            border: 2px solid var(--secondary-blue);
-            background: var(--white);
-            color: var(--secondary-blue);
-            border-radius: 8px;
+            background: #fff;
+            border-radius: 10px;
+            border-left: 6px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .role-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 15px;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 1rem;
+            min-width: 100px;
+            text-align: center;
         }
 
-        .role-btn:hover {
-            background: var(--secondary-blue);
-            color: var(--white);
+        /* Role Specific Colors */
+        .tag-chief { background: #e0dcfc; color: var(--chief-color); border: 1px solid var(--chief-color); }
+        .tag-invig { background: #dff9f3; color: var(--invig-color); border: 1px solid var(--invig-color); }
+        .tag-both { background: #fff4e0; color: #d39e00; border: 1px solid var(--both-color); }
+
+        .line-chief { border-left-color: var(--chief-color) !important; }
+        .line-invig { border-left-color: var(--invig-color) !important; }
+        .line-both { border-left-color: var(--both-color) !important; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Feedback Styles */
-        .correct-anim { animation: pulseGreen 0.6s ease; }
-        .wrong-anim { animation: shakeRed 0.5s ease; }
-
-        @keyframes pulseGreen {
-            0% { background: var(--white); }
-            50% { background: #d4edda; border-color: var(--accent-green); }
-            100% { background: var(--white); }
+        .instruction {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
         }
-
-        @keyframes shakeRed {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); background: #f8d7da; }
-            75% { transform: translateX(10px); }
-        }
-
-        .summary-screen { display: none; }
-        .summary-screen h2 { color: var(--primary-navy); }
     </style>
 </head>
 <body>
 
-<div class="challenge-container" id="game-box">
-    <div class="card-counter">Duty <span id="current-num">1</span> of 15</div>
-    <div class="progress-container">
-        <div id="progress-bar"></div>
+<div class="simulation-container">
+    <div class="header">
+        <h2 style="margin:0">Exam Day Timeline</h2>
+        <p style="margin:5px 0 0; opacity:0.8">Click a phase to explore responsibilities</p>
     </div>
 
-    <div id="duty-card" class="duty-display">
-        <!-- Text injected here -->
+    <div class="timeline-nav">
+        <button class="stage-btn active" onclick="showStage('prep', this)">1. Preparation</button>
+        <button class="stage-btn" onclick="showStage('start', this)">2. Exam Start</button>
+        <button class="stage-btn" onclick="showStage('during', this)">3. During Writing</button>
+        <button class="stage-btn" onclick="showStage('end', this)">4. Conclusion</button>
     </div>
 
-    <div class="button-grid" id="controls">
-        <button class="role-btn" onclick="checkAnswer('chief')">Chief Invigilator</button>
-        <button class="role-btn" onclick="checkAnswer('invigilator')">Invigilator</button>
-        <button class="role-btn" onclick="checkAnswer('both')">Both Roles</button>
-    </div>
-
-    <div id="summary" class="summary-screen">
-        <h2>Activity Complete!</h2>
-        <p>You have successfully assigned all invigilation duties.</p>
-        <button class="role-btn" style="width:100%" onclick="location.reload()">Restart Activity</button>
+    <div class="content-area">
+        <p class="instruction" id="stage-desc">Duties performed at least 48 hours before the session starts.</p>
+        <div class="duty-grid" id="duty-list">
+            <!-- Content injected here -->
+        </div>
     </div>
 </div>
 
 <script>
-    const duties = [
-        { text: "Ensure the examination venue is prepared at least two days before the examination.", ans: "chief" },
-        { text: "Wear a name tag at all times.", ans: "both" },
-        { text: "Check each candidate's proof of identity (ID or passport) and official Admission Letter.", ans: "invigilator" },
-        { text: "Confirm the correct candidate-to-invigilator ratio of 1:30 is maintained.", ans: "chief" },
-        { text: "Move continuously around the venue to supervise candidates while they write.", ans: "invigilator" },
-        { text: "Escort candidates to the bathroom when necessary.", ans: "invigilator" },
-        { text: "Open sealed question paper bags in front of the candidates and the principal.", ans: "chief" },
-        { text: "Count all answer books before and after use.", ans: "invigilator" },
-        { text: "Mark candidates as Present or Absent on the Script Control Register.", ans: "invigilator" },
-        { text: "Confiscate unauthorised devices or materials and mark the answer script as IRREGULARITY.", ans: "invigilator" },
-        { text: "Submit the irregularity report form (Annexure A) to the WCED Irregularity Unit.", ans: "chief" },
-        { text: "Ensure no answer books — used, unused or spoilt — remain in the venue after the session.", ans: "invigilator" },
-        { text: "Batch and package answer scripts after each session.", ans: "both" },
-        { text: "Ensure the seating plan is displayed inside and outside the examination room.", ans: "chief" },
-        { text: "Retrieve the sealed session bag in accordance with the required GLAM key procedure.", ans: "chief" }
-    ];
-
-    let currentIndex = 0;
-
-    function loadCard() {
-        if (currentIndex < duties.length) {
-            document.getElementById('duty-card').innerText = duties[currentIndex].text;
-            document.getElementById('current-num').innerText = currentIndex + 1;
-            updateProgress();
-        } else {
-            showSummary();
+    const timelineData = {
+        prep: {
+            desc: "Setting the stage for a successful session.",
+            items: [
+                { role: "Chief Invigilator", text: "Ensure the examination venue is prepared at least two days before.", type: "chief" },
+                { role: "Chief Invigilator", text: "Ensure seating plans are displayed inside and outside the room.", type: "chief" },
+                { role: "Chief Invigilator", text: "Confirm candidate-to-invigilator ratio (1:30) is maintained.", type: "chief" }
+            ]
+        },
+        start: {
+            desc: "The critical moments before 'Start Writing' is announced.",
+            items: [
+                { role: "Chief Invigilator", text: "Retrieve sealed session bags using the GLAM key procedure.", type: "chief" },
+                { role: "Invigilator", text: "Check candidate proof of identity and Admission Letters.", type: "invigilator" },
+                { role: "Chief Invigilator", text: "Open sealed paper bags in front of candidates and the Principal.", type: "chief" },
+                { role: "Both", text: "Wear a name tag at all times.", type: "both" }
+            ]
+        },
+        during: {
+            desc: "Maintaining integrity while the exam is in progress.",
+            items: [
+                { role: "Invigilator", text: "Move continuously around the venue to supervise learners.", type: "invigilator" },
+                { role: "Invigilator", text: "Escort candidates to the bathroom when necessary.", type: "invigilator" },
+                { role: "Invigilator", text: "Confiscate unauthorised devices and mark scripts as IRREGULARITY.", type: "invigilator" },
+                { role: "Invigilator", text: "Mark learners as Present or Absent on the Script Control Register.", type: "invigilator" }
+            ]
+        },
+        end: {
+            desc: "Wrapping up and securing the answer scripts.",
+            items: [
+                { role: "Invigilator", text: "Count all answer books before and after use.", type: "invigilator" },
+                { role: "Invigilator", text: "Ensure no answer books remain in the venue after the session.", type: "invigilator" },
+                { role: "Both", text: "Batch and package answer scripts after each session.", type: "both" },
+                { role: "Chief Invigilator", text: "Submit irregularity reports (Annexure A) to the WCED Unit.", type: "chief" }
+            ]
         }
+    };
+
+    function showStage(stageKey, btn) {
+        // Update Buttons
+        document.querySelectorAll('.stage-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const container = document.getElementById('duty-list');
+        const desc = document.getElementById('stage-desc');
+        
+        container.innerHTML = '';
+        desc.innerText = timelineData[stageKey].desc;
+
+        timelineData[stageKey].items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = `duty-item line-${item.type}`;
+            div.innerHTML = `
+                <span class="role-tag tag-${item.type}">${item.role}</span>
+                <span>${item.text}</span>
+            `;
+            container.appendChild(div);
+        });
     }
 
-    function checkAnswer(choice) {
-        const display = document.getElementById('duty-card');
-        if (choice === duties[currentIndex].ans) {
-            display.classList.add('correct-anim');
-            setTimeout(() => {
-                display.classList.remove('correct-anim');
-                currentIndex++;
-                loadCard();
-            }, 600);
-        } else {
-            display.classList.add('wrong-anim');
-            setTimeout(() => {
-                display.classList.remove('wrong-anim');
-            }, 500);
-        }
-    }
-
-    function updateProgress() {
-        const percent = (currentIndex / duties.length) * 100;
-        document.getElementById('progress-bar').style.width = percent + '%';
-    }
-
-    function showSummary() {
-        document.getElementById('duty-card').style.display = 'none';
-        document.getElementById('controls').style.display = 'none';
-        document.getElementById('summary').style.display = 'block';
-        document.getElementById('progress-bar').style.width = '100%';
-    }
-
-    // Initialise
-    loadCard();
+    // Load first stage
+    showStage('prep', document.querySelector('.stage-btn'));
 </script>
 
 </body>
